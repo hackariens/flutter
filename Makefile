@@ -1,4 +1,12 @@
 .DEFAULT_GOAL := help
+
+SUPPORTED_COMMANDS := contributors git linter
+SUPPORTS_MAKE_ARGS := $(findstring $(firstword $(MAKECMDGOALS)), $(SUPPORTED_COMMANDS))
+ifneq "$(SUPPORTS_MAKE_ARGS)" ""
+  COMMAND_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+  $(eval $(COMMAND_ARGS):;@:)
+endif
+
 %:
 	@:
 
@@ -14,23 +22,45 @@ node_modules: package-lock.json
 install: node_modules ## Installation application
 
 contributors: ## Contributors
-	@npm run contributors
-
-contributors-add: ## add Contributors
+ifeq ($(COMMAND_ARGS),add)
 	@npm run contributors add
-
-contributors-check: ## check Contributors
+else ifeq ($(COMMAND_ARGS),check)
 	@npm run contributors check
-
-contributors-generate: ## generate Contributors
+else ifeq ($(COMMAND_ARGS),generate)
 	@npm run contributors generate
+else
+	@npm run contributors
+endif
 
-git-commit: ## Commit data
-	npm run commit
-
-git-check: ## CHECK before
-	@make contributors-check -i
+git: ## Scripts GIT
+ifeq ($(COMMAND_ARGS),commit)
+	@npm run commit
+else ifeq ($(COMMAND_ARGS),status)
 	@git status
+else ifeq ($(COMMAND_ARGS),check)
+	@make contributors check -i
+	@make linter all -i
+	@make git status -i
+else
+	@echo "ARGUMENT missing"
+	@echo "---"
+	@echo "make git ARGUMENT"
+	@echo "---"
+	@echo "commit: Commit data"
+	@echo "check: CHECK before"
+	@echo "status: status"
+endif
 
-linter-readme: ## linter README.md
+linter: ## Scripts Linter
+ifeq ($(COMMAND_ARGS),all)
+	@make linter readme -i
+else ifeq ($(COMMAND_ARGS),readme)
 	@npm run linter-markdown README.md
+else
+	@echo "ARGUMENT missing"
+	@echo "---"
+	@echo "make linter ARGUMENT"
+	@echo "---"
+	@echo "all: ## Launch all linter"
+	@echo "readme: linter README.md"
+endif
