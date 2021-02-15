@@ -22,4 +22,4 @@ jobs:
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: make node_modules
       - name: linter readme.md
-        run: make linter-readme
+        run: make linter readme
