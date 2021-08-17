@@ -1,48 +1,15 @@
-.DEFAULT_GOAL := help
+include make/general/Makefile
 
-SUPPORTED_COMMANDS := contributors git linter
+SUPPORTED_COMMANDS := linter
 SUPPORTS_MAKE_ARGS := $(findstring $(firstword $(MAKECMDGOALS)), $(SUPPORTED_COMMANDS))
 ifneq "$(SUPPORTS_MAKE_ARGS)" ""
   COMMAND_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
   $(eval $(COMMAND_ARGS):;@:)
 endif
 
-help:
-	@grep -E '(^[a-zA-Z_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
-
-node_modules:
-	@npm install
-
 install: node_modules ## Installation application
 
-contributors: node_modules ## Contributors
-ifeq ($(COMMAND_ARGS),add)
-	@npm run contributors add
-else ifeq ($(COMMAND_ARGS),check)
-	@npm run contributors check
-else ifeq ($(COMMAND_ARGS),generate)
-	@npm run contributors generate
-else
-	@npm run contributors
-endif
-
-git: node_modules ## Scripts GIT
-ifeq ($(COMMAND_ARGS),status)
-	@git status
-else ifeq ($(COMMAND_ARGS),check)
-	@make contributors check -i
-	@make linter all -i
-	@make git status -i
-else
-	@echo "ARGUMENT missing"
-	@echo "---"
-	@echo "make git ARGUMENT"
-	@echo "---"
-	@echo "check: CHECK before"
-	@echo "status: status"
-endif
-
-linter: node_modules ## Scripts Linter
+linter: node_modules ### Scripts Linter
 ifeq ($(COMMAND_ARGS),all)
 	@make linter readme -i
 else ifeq ($(COMMAND_ARGS),readme)
