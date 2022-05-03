@@ -21,6 +21,14 @@ Software:
 - flutter
 - npm
 
+## Download
+
+```sh
+git clone git@github.com:koromerzhin/template-flutter.git template-flutter
+cd template-flutter
+git submodule update --init
+```
+
 ## Install
 
 ```sh
