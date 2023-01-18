@@ -1,27 +1,22 @@
 {
-  "name": "@koromerzhin/template-flutter",
+  "name": "@hackariens/flutter",
   "version": "1.0.0",
   "description": "Template de nouveau repository",
   "scripts": {
-    "linter-markdown": "markdownlint",
-    "contributors": "all-contributors",
-    "readme": "readme",
-    "licenses": "license-checker",
-    "changelog": "changelog",
-    "jscpd": "jscpd apps"
+    "lint:markdown": "markdownlint README.md"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/koromerzhin/template-flutter.git"
+    "url": "git+https://github.com/hackariens/flutter.git"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/koromerzhin/template-flutter/issues"
+    "url": "https://github.com/hackariens/flutter/issues"
   },
-  "homepage": "https://github.com/koromerzhin/template-flutter#readme",
+  "homepage": "https://github.com/hackariens/flutter#readme",
   "dependencies": {
-    "koromerzhin-dependencies": "^1.3.0"
+    "korojscommands": "^1.2.7"
   }
 }
