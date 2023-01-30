@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/hackariens/flutter#readme",
   "dependencies": {
-    "korojscommands": "^1.2.12"
+    "korojscommands": "^1.2.13"
   }
 }
