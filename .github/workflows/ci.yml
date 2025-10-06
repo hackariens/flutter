@@ -1,14 +1,141 @@
-name: ci
-on: [push]
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ develop, main ]
+  pull_request:
+    branches: [ develop, main ]
+
+env:
+  FLUTTER_VERSION: '3.24.0'
+  NODE_VERSION: '20'
+
 jobs:
-  tests:
+  lint-and-test:
+    name: Lint & Test
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    
     steps:
-      - name: Checkout
+      - name: 📚 Checkout repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: Install npm dependencies
-        run: npm install
-      - name: linter readme.md
+          fetch-depth: 0
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install Node.js dependencies
+        run: npm ci
+
+      - name: 🔍 Lint markdown files
         run: npm run lint:markdown
+
+      - name: 🏗️ Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: 📦 Get Flutter dependencies
+        working-directory: apps
+        run: flutter pub get
+
+      - name: 🔍 Analyze Flutter code
+        working-directory: apps
+        run: flutter analyze
+
+      - name: 🧪 Run Flutter tests
+        working-directory: apps
+        run: flutter test --coverage
+
+      - name: 📊 Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: apps/coverage/lcov.info
+          flags: flutter
+          fail_ci_if_error: false
+
+  build:
+    name: Build Applications
+    runs-on: ubuntu-24.04
+    needs: lint-and-test
+    if: github.event_name == 'push'
+    timeout-minutes: 45
+    
+    strategy:
+      matrix:
+        platform: [android, web]
+        
+    steps:
+      - name: 📚 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: 🏗️ Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: 📦 Get Flutter dependencies
+        working-directory: apps
+        run: flutter pub get
+
+      - name: 🏗️ Build for ${{ matrix.platform }}
+        working-directory: apps
+        run: |
+          if [ "${{ matrix.platform }}" == "android" ]; then
+            flutter build apk --release
+          elif [ "${{ matrix.platform }}" == "web" ]; then
+            flutter build web --release
+          fi
+
+      - name: 📤 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}-build
+          path: |
+            apps/build/app/outputs/flutter-apk/*.apk
+            apps/build/web/
+          retention-days: 7
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    
+    steps:
+      - name: 📚 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install Node.js dependencies
+        run: npm ci
+
+      - name: 🔐 Run security audit
+        run: npm audit --audit-level=moderate
+
+      - name: 🏗️ Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+
+      - name: 📦 Get Flutter dependencies
+        working-directory: apps
+        run: flutter pub get
+
+      - name: 🔐 Check Flutter dependencies
+        working-directory: apps
+        run: flutter pub deps
