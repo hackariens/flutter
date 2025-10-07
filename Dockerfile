@@ -1,7 +1,10 @@
 FROM debian:stable-slim
 
+# Arguments de build
+ARG FLUTTER_VERSION=3.35.5
+
 # Variables
-ENV FLUTTER_VERSION=3.24.3
+ENV FLUTTER_VERSION=${FLUTTER_VERSION}
 ENV FLUTTER_HOME=/opt/flutter
 ENV PATH="$FLUTTER_HOME/bin:$PATH"
 
