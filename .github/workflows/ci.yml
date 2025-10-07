@@ -2,13 +2,12 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ develop, main ]
+    branches: [main, develop]
   pull_request:
-    branches: [ develop, main ]
+    branches: [main, develop]
 
 env:
   FLUTTER_VERSION: '3.24.0'
-  NODE_VERSION: '20'
 
 jobs:
   lint-and-test:
@@ -26,8 +25,9 @@ jobs:
       - name: 🏗️ Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: '.nvmrc'
           cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
 
       - name: 📦 Install Node.js dependencies
         run: npm ci
@@ -117,8 +117,9 @@ jobs:
       - name: 🏗️ Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version-file: '.nvmrc'
           cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
 
       - name: 📦 Install Node.js dependencies
         run: npm ci
