@@ -41,3 +41,15 @@ tasks:
     aliases: [ h ]
     cmds:
     - task: default
+
+  create:container:
+    desc: "Construit l'image Docker pour l'environnement de développement Flutter"
+    silent: true
+    cmds:
+    - docker build -t flutter-dev .
+
+  new:apps:
+    desc: "Crée une nouvelle application Flutter dans le répertoire apps"
+    silent: true
+    cmds:
+    - docker run --rm -it -v $PWD:/app flutter-dev flutter create apps
