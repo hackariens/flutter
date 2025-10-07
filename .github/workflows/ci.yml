@@ -6,13 +6,34 @@ on:
   pull_request:
     branches: [main, develop]
 
-env:
-  FLUTTER_VERSION: '3.24.0'
-
 jobs:
+  setup-env:
+    name: Setup Environment Variables
+    runs-on: ubuntu-24.04
+    outputs:
+      flutter-version: ${{ steps.env.outputs.flutter-version }}
+      node-version: ${{ steps.env.outputs.node-version }}
+    steps:
+      - name: 📚 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🔧 Load environment variables
+        id: env
+        run: |
+          # Lire les variables depuis .env.example
+          FLUTTER_VERSION=$(grep "FLUTTER_VERSION=" .env.example | cut -d '=' -f2)
+          NODE_VERSION=$(grep "NODE_VERSION=" .env.example | cut -d '=' -f2)
+          
+          echo "flutter-version=$FLUTTER_VERSION" >> $GITHUB_OUTPUT
+          echo "node-version=$NODE_VERSION" >> $GITHUB_OUTPUT
+          
+          echo "Flutter version: $FLUTTER_VERSION"
+          echo "Node version: $NODE_VERSION"
+
   lint-and-test:
     name: Lint & Test
     runs-on: ubuntu-24.04
+    needs: setup-env
     timeout-minutes: 30
     
     steps:
@@ -25,7 +46,7 @@ jobs:
       - name: 🏗️ Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
+          node-version: ${{ needs.setup-env.outputs.node-version }}
           cache: 'npm'
           cache-dependency-path: 'package-lock.json'
 
@@ -38,7 +59,7 @@ jobs:
       - name: 🏗️ Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
+          flutter-version: ${{ needs.setup-env.outputs.flutter-version }}
           cache: true
 
       - name: 📦 Get Flutter dependencies
@@ -63,7 +84,7 @@ jobs:
   build:
     name: Build Applications
     runs-on: ubuntu-24.04
-    needs: lint-and-test
+    needs: [setup-env, lint-and-test]
     if: github.event_name == 'push'
     timeout-minutes: 45
     
@@ -80,7 +101,7 @@ jobs:
       - name: 🏗️ Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
+          flutter-version: ${{ needs.setup-env.outputs.flutter-version }}
           cache: true
 
       - name: 📦 Get Flutter dependencies
@@ -108,6 +129,7 @@ jobs:
   security-scan:
     name: Security Scan
     runs-on: ubuntu-24.04
+    needs: setup-env
     timeout-minutes: 15
     
     steps:
@@ -117,7 +139,7 @@ jobs:
       - name: 🏗️ Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
+          node-version: ${{ needs.setup-env.outputs.node-version }}
           cache: 'npm'
           cache-dependency-path: 'package-lock.json'
 
@@ -130,7 +152,7 @@ jobs:
       - name: 🏗️ Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
+          flutter-version: ${{ needs.setup-env.outputs.flutter-version }}
           cache: true
 
       - name: 📦 Get Flutter dependencies
