@@ -3,7 +3,7 @@
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000)
 ![Documentation](https://img.shields.io/badge/documentation-yes-brightgreen.svg)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/hackariens/flutter/graphs/commit-activity)
-![Continuous Integration](https://github.com/hackariens/flutter/workflows/ci/badge.svg?branch=develop)
+![Continuous Integration](https://github.com/hackariens/flutter/actions/workflows/ci.yml/badge.svg?branch=develop)
 
 > Template d'un nouveau projet flutter
 
@@ -17,13 +17,14 @@
 
 Software:
 
-- flutter
-- npm
+- [task](https://taskfile.dev/)
+- [nodejs](https://nodejs.org/)
+- [flutter](https://flutter.dev/)
 
 ## Download
 
 ```sh
-git clone --recurse-submodules git@github.com:hackariens/flutter.git flutter
+git clone --recursive git@github.com:hackariens/flutter.git flutter
 cd flutter
 ```
 
