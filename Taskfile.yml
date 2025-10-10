@@ -48,7 +48,7 @@ tasks:
     cmds:
     - task: default
 
-  create:container:
+  create:apps:
     desc: "Construit l'image Docker pour l'environnement de développement Flutter"
     silent: true
     cmds:

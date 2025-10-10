@@ -38,12 +38,6 @@ Edit .env with .env.example
 npm install
 ```
 
-## Launch
-
-``` sh
-npm run exec
-```
-
 ## Author
 
 👤 **koromerzhin**
