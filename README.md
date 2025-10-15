@@ -32,17 +32,6 @@ cd flutter
 
 Edit .env with .env.example
 
-## Download
-
-```sh
-git clone --recurse-submodules git@github.com:hackariens/flutter.git flutter
-cd flutter
-```
-
-## Environnment
-
-Edit .env with .env.example
-
 ## Install
 
 ```sh
