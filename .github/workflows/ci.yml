@@ -1,18 +1,127 @@
-name: ci
-on: [push]
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
 jobs:
-  tests:
-    runs-on: ${{ matrix.operating-system }}
-    strategy:
-      fail-fast: false
-      matrix:
-        operating-system: [ubuntu-20.04]
+  setup-env:
+    name: Setup Environment Variables
+    runs-on: ubuntu-24.04
+    outputs:
+      flutter-version: ${{ steps.env.outputs.flutter-version }}
+      node-version: ${{ steps.env.outputs.node-version }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: 📚 Checkout repository
+        uses: actions/checkout@v5
+
+      - name: 🔧 Load environment variables
+        id: env
+        run: |
+          # Lire les variables depuis .env.example
+          FLUTTER_VERSION=$(grep "FLUTTER_VERSION=" .env.example | cut -d '=' -f2)
+          NODE_VERSION=$(grep "NODE_VERSION=" .env.example | cut -d '=' -f2)
+          
+          echo "flutter-version=$FLUTTER_VERSION" >> $GITHUB_OUTPUT
+          echo "node-version=$NODE_VERSION" >> $GITHUB_OUTPUT
+          
+          echo "Flutter version: $FLUTTER_VERSION"
+          echo "Node version: $NODE_VERSION"
+
+  lint-and-test:
+    name: Lint & Test
+    runs-on: ubuntu-24.04
+    needs: setup-env
+    timeout-minutes: 30
+    
+    steps:
+      - name: 📚 Checkout repository
+        uses: actions/checkout@v5
         with:
           submodules: recursive
-      - name: Install npm dependencies
-        run: npm install
-      - name: linter readme.md
+          fetch-depth: 0
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ needs.setup-env.outputs.node-version }}
+          cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
+
+      - name: 📦 Install Node.js dependencies
+        run: npm ci
+
+      - name: 🔍 Lint markdown files
         run: npm run lint:markdown
+
+      - name: 🏗️ Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ needs.setup-env.outputs.flutter-version }}
+          cache: true
+
+      - name: 📦 Get Flutter dependencies
+        working-directory: apps
+        run: flutter pub get
+
+      - name: 🔍 Analyze Flutter code
+        working-directory: apps
+        run: flutter analyze
+
+      - name: 🧪 Run Flutter tests
+        working-directory: apps
+        run: flutter test --coverage
+
+      - name: 📊 Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: apps/coverage/lcov.info
+          flags: flutter
+          fail_ci_if_error: false
+
+  build:
+    name: Build Applications
+    runs-on: ubuntu-24.04
+    needs: [setup-env, lint-and-test]
+    if: github.event_name == 'push'
+    timeout-minutes: 45
+    
+    strategy:
+      matrix:
+        platform: [android, web]
+        
+    steps:
+      - name: 📚 Checkout repository
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: 🏗️ Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ needs.setup-env.outputs.flutter-version }}
+          cache: true
+
+      - name: 📦 Get Flutter dependencies
+        working-directory: apps
+        run: flutter pub get
+
+      - name: 🏗️ Build for ${{ matrix.platform }}
+        working-directory: apps
+        run: |
+          if [ "${{ matrix.platform }}" == "android" ]; then
+            flutter build apk --release
+          elif [ "${{ matrix.platform }}" == "web" ]; then
+            flutter build web --release
+          fi
+
+      - name: 📤 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}-build
+          path: |
+            apps/build/app/outputs/flutter-apk/*.apk
+            apps/build/web/
+          retention-days: 7

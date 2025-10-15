@@ -1,0 +1,80 @@
+version: 3
+
+# Taskfile principal - Tâches globales et inclusions
+# Charge automatiquement les variables depuis le fichier .env s'il existe
+dotenv: [ '.env', '.env.example' ]
+
+includes:
+  docker: ./taskfiles/docker/Taskfile.yml
+  utils: ./taskfiles/utils/Taskfile.yml
+  env: ./taskfiles/env/Taskfile.yml
+  nodejs: ./taskfiles/nodejs/Taskfile.yml
+  download: ./taskfiles/download/Taskfile.yml
+
+vars:
+  # Variables avec valeurs par défaut depuis .env ou valeurs de fallback
+  PROJECT_NAME: '{{.PROJECT_NAME | default "flutter"}}'
+  PROJECT_VERSION: '1.0.0'
+  ENVIRONMENT: '{{.ENVIRONMENT | default "development"}}'
+  # Variables Flutter et Node.js depuis .env.example
+  FLUTTER_VERSION: '{{.FLUTTER_VERSION | default "3.35.5"}}'
+  NODE_VERSION: '{{.NODE_VERSION | default "20"}}'
+
+tasks:
+  default:
+    desc: "Affiche l'aide et les tâches disponibles"
+    silent: true
+    cmds:
+    - echo "🛠️  Collection de Taskfiles pour le développement"
+    - echo ""
+    - echo "Tâches globales disponibles :"
+    - task --list
+    - echo ""
+
+  lint:all:
+    desc: "Exécute tous les linters disponibles"
+    cmds:
+    - npm run lint:markdown
+
+  info:
+    desc: "Affiche les informations du projet avec les variables d'environnement"
+    silent: true
+    cmds:
+    - |
+      echo "🛠️  {{.PROJECT_NAME}} v{{.PROJECT_VERSION}} - Collection de Taskfiles"
+      echo "Environnement: {{.ENVIRONMENT}}"
+      echo "Flutter version: {{.FLUTTER_VERSION}}"
+      echo "Node.js version: {{.NODE_VERSION}}"
+
+  help:
+    desc: "Affiche l'aide détaillée"
+    aliases: [ h ]
+    silent: true
+    cmds:
+    - task: default
+
+  create:apps:
+    desc: "Construit l'image Docker pour l'environnement de développement Flutter"
+    silent: true
+    cmds:
+    - |
+      echo "🏗️ Construction de l'image Docker avec Flutter {{.FLUTTER_VERSION}}..."
+      docker build \
+        --build-arg FLUTTER_VERSION={{.FLUTTER_VERSION}} \
+        -t flutter-dev:latest \
+        -t flutter-dev:{{.FLUTTER_VERSION}} \
+        .
+      echo "✅ Image Docker construite avec succès!"
+
+  new:apps:
+    desc: "Crée une nouvelle application Flutter dans le répertoire apps"
+    silent: true
+    cmds:
+    - |
+      echo "🚀 Création d'une nouvelle application Flutter avec la version {{.FLUTTER_VERSION}}..."
+      docker run --rm -it \
+        -v $PWD:/app \
+        -e FLUTTER_VERSION={{.FLUTTER_VERSION}} \
+        flutter-dev:{{.FLUTTER_VERSION}} \
+        flutter create apps
+      echo "✅ Application Flutter créée dans le répertoire apps!"

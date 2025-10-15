@@ -3,22 +3,34 @@
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000)
 ![Documentation](https://img.shields.io/badge/documentation-yes-brightgreen.svg)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/hackariens/flutter/graphs/commit-activity)
-![Continuous Integration](https://github.com/hackariens/flutter/workflows/ci/badge.svg?branch=develop)
+![Continuous Integration](https://github.com/hackariens/flutter/actions/workflows/ci.yml/badge.svg?branch=develop)
 
 > Template d'un nouveau projet flutter
 
 ## 🏠 [Homepage](https://github.com/hackariens/flutter#readme)
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)
+![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Need
 
 Software:
 
-- flutter
-- npm
+- [task](https://taskfile.dev/)
+- [nodejs](https://nodejs.org/)
+- [flutter](https://flutter.dev/)
+
+## Download
+
+```sh
+git clone --recursive git@github.com:hackariens/flutter.git flutter
+cd flutter
+```
+
+## Environnment
+
+Edit .env with .env.example
 
 ## Download
 
@@ -35,12 +47,6 @@ Edit .env with .env.example
 
 ```sh
 npm install
-```
-
-## Launch
-
-``` sh
-npm run exec
 ```
 
 ## Author
@@ -85,6 +91,8 @@ Thanks goes to these wonderful people
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/koromerzhin"><img src="https://avatars0.githubusercontent.com/u/308012?v=4" width="100px;" alt=""/><br /><sub><b>Le TOULLEC Martial</b></sub></a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.mend.io/free-developer-tools/renovate/"><img src="https://avatars.githubusercontent.com/u/25180681?v=4" width="100px;" alt=""/><br /><sub><b>Mend Renovate</b></sub></a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/apps/dependabot"><img src="https://avatars.githubusercontent.com/in/29110?v=4" width="100px;" alt=""/><br /><sub><b>dependabot[bot]</b></sub></a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/apps/mend-bolt-for-github"><img src="https://avatars.githubusercontent.com/in/16809?v=4" width="100px;" alt=""/><br /><sub><b>mend-bolt-for-github[bot]</b></sub></a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/apps/renovate"><img src="https://avatars.githubusercontent.com/in/2740?v=4" width="100px;" alt=""/><br /><sub><b>renovate[bot]</b></sub></a></td>
     </tr>
   </tbody>
 </table>
