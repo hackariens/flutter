@@ -1,6 +1,6 @@
 {
   "name": "@hackariens/flutter",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Template de nouveau projet flutter",
   "scripts": {
     "lint:markdown": "markdownlint README.md",
