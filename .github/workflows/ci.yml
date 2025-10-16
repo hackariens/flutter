@@ -51,7 +51,7 @@ jobs:
           cache-dependency-path: 'package-lock.json'
 
       - name: 📦 Install Node.js dependencies
-        run: npm ci
+        run: npm install
 
       - name: 🔍 Lint markdown files
         run: npm run lint:markdown
