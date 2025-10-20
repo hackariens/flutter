@@ -43,9 +43,6 @@ jobs:
           submodules: recursive
           fetch-depth: 0
       
-      - name: Setup Actionlint
-        uses: raven-actions/actionlint@v2
-      
       - name: Setup Task
         uses: go-task/setup-task@v1
 
