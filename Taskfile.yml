@@ -36,10 +36,10 @@ tasks:
     cmds:
     - task: lint:yml
       vars:
-        IGNORE_DIR: "taskfiles"
+        IGNORE_DIR: "taskfiles,apps"
     - task: lint:md
       vars:
-        IGNORE_DIR: "taskfiles"
+        IGNORE_DIR: "taskfiles,apps"
     - task: lint:action
     - task: lint:docker
       vars:
