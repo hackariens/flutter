@@ -77,13 +77,6 @@ jobs:
         working-directory: apps
         run: flutter test --coverage
 
-      - name: 📊 Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          file: apps/coverage/lcov.info
-          flags: flutter
-          fail_ci_if_error: false
-
   build:
     name: Build Applications
     runs-on: ubuntu-24.04
