@@ -15,7 +15,7 @@ jobs:
       node-version: ${{ steps.env.outputs.node-version }}
     steps:
       - name: 📚 Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: 🔧 Load environment variables
         id: env
@@ -38,7 +38,7 @@ jobs:
     
     steps:
       - name: 📚 Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           submodules: recursive
           fetch-depth: 0
@@ -90,7 +90,7 @@ jobs:
         
     steps:
       - name: 📚 Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           submodules: recursive
 
