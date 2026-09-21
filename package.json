@@ -17,8 +17,8 @@
   },
   "homepage": "https://github.com/hackariens/flutter#readme",
   "devDependencies": {
-    "cypress": "15.21.*",
+    "cypress": "16.1.*",
     "jscpd": "5.2.*",
-    "release-it": "19.2.*"
+    "release-it": "21.1.*"
   }
 }
