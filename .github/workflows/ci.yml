@@ -9,7 +9,7 @@ on:
 jobs:
   setup-env:
     name: Setup Environment Variables
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       flutter-version: ${{ steps.env.outputs.flutter-version }}
       node-version: ${{ steps.env.outputs.node-version }}
@@ -32,7 +32,7 @@ jobs:
 
   lint-and-test:
     name: Lint & Test
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: setup-env
     timeout-minutes: 30
     
@@ -79,7 +79,7 @@ jobs:
 
   build:
     name: Build Applications
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: [setup-env, lint-and-test]
     if: github.event_name == 'push'
     timeout-minutes: 45
